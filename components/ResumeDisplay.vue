@@ -9,8 +9,6 @@
         </template>
 
         <template v-else>
-            <!-- <h1>Резюме: {{ resumeModel.data.name }}</h1> -->
-
             <!-- Мета-контролы -->
             <div class="flex justify-start gap-2 mb-4">
                 <UButton
@@ -67,13 +65,21 @@
             <UCard>
                 <!-- Профиль кандидата -->
                 <div class="flex gap-6 items-start mb-4">
-                    <!-- Аватар (заглушка, если нет фото) -->
-                    <UAvatar
-                        :src="resumeModel.data.photo"
-                        size="3xl"
-                        icon="i-heroicons-user"
-                        class="shrink-0"
-                    />
+                    <!-- Аватар  -->
+                    <div class="relative w-[200px] h-[200px]">
+                        <UAvatar
+                            :src="avatarUrl"
+                            icon="i-heroicons-user"
+                            class="w-full h-full shrink-0"
+                        />
+                        <div
+                            v-if="avatarError"
+                            class="absolute inset-0 flex items-center justify-center text-red-600 text-sm font-semibold bg-black/50 rounded-full text-center px-2"
+                        >
+                            Не получилось <br />
+                            загрузить аватар
+                        </div>
+                    </div>
 
                     <!-- Текстовый блок -->
                     <div class="space-y-1">
@@ -275,7 +281,7 @@
                     </p>
                     <p>
                         <strong>Гражданство:</strong>
-                        {{ parseCitizenship(resumeModel.data.description) }}
+                        {{ extractCitizenship(resumeModel.data.description) }}
                     </p>
                 </div>
 
@@ -329,15 +335,17 @@
 const config = useRuntimeConfig();
 const apiBaseUrl = config.public.apiBase;
 
-const resume = ref<any[]>([]);
+const resume = ref<any | null>(null);
 const error = ref<string | null>(null);
+const avatarUrl = ref<string>('/default-avatar.png');
+const avatarError = ref(false);
 
 // Resume model computed from mock data
 const resumeModel = computed(() => {
     if (error.value) {
         return { loading: false, error: error.value, data: null };
     }
-    if (!resume.value || Object.keys(resume.value).length === 0) {
+    if (!resume.value) {
         return { loading: true, error: null, data: null };
     }
     return { loading: false, error: null, data: resume.value };
@@ -349,15 +357,40 @@ onMounted(async () => {
         const response = await fetch(`${apiBaseUrl}/test/v2/app`);
         if (!response.ok) throw new Error('Failed to fetch resume');
         const data = await response.json();
-        resume.value = data || [];
+        resume.value = data || null;
+
+        await fetchAvatar();
     } catch (err) {
         console.error('Error fetching resume:', err);
         error.value = 'Failed to load resume';
     }
 });
 
-// Пример утилит
-function parseCitizenship(text: unknown): string {
+// Fetch avatar for mock resume
+async function fetchAvatar() {
+    avatarError.value = false;
+
+    if (!resumeModel.value.data?.photo) {
+        return;
+    }
+
+    try {
+        const domain = new URL(apiBaseUrl).origin;
+        const photoEndpoint = resumeModel.value.data.photo;
+        const avatarResponse = await fetch(`${domain}${photoEndpoint}`);
+
+        if (!avatarResponse.ok) throw new Error('Avatar not found');
+
+        const blob = await avatarResponse.blob();
+        avatarUrl.value = URL.createObjectURL(blob);
+    } catch (err) {
+        console.error('Error fetching avatar:', err);
+        avatarError.value = true;
+    }
+}
+
+// Utilities
+function extractCitizenship(text: unknown): string {
     if (typeof text !== 'string') return '-ошибка-';
 
     const match = text.match(/Гражданство: (.+)/);
