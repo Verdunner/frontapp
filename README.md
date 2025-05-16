@@ -18,14 +18,12 @@
 
 #### Основные зависимости:
 
--   Vue 3 Composition Api (script setup)
+-   Nuxt 3 на базе Vite, @nuxt-пакеты
 
--   Pinia
-
--   SCSS
+-   Vue 3 Composition Api (script setup) + Vue Router
 
 #### Dev зависимости:
 
--   Vite
+-   dotenv-expand
 
 -   TypeScript, @types-пакеты
