@@ -1,17 +1,31 @@
-# Jobcart App Nuxt
+## Frontapp
 
-Проект на [Nuxt](https://nuxt.com/docs/getting-started/introduction).
+### Страница резюме, получающая данные с API
 
-Инфтерфейс на [Nuxit UI](https://ui.nuxt.com/components/app)
+![preview.png](https://github.com/Verdunner/frontapp/blob/main/public/preview.png)
 
-В проекте доступны все классы [Tailwind](https://tailwindcss.com/docs/installation/using-vite)
+---
 
-## Setup на
+## Команды для запуска проекта
 
-Make sure to install dependencies:
+1. `npm install` (Node v22.11.0, npm v11.1.0)
 
-```bash
-# npm
-npm install
-```
+2. `npm run start` или `npm run build`
 
+---
+
+### Стек технологий проекта:
+
+#### Основные зависимости:
+
+-   Vue 3 Composition Api (script setup)
+
+-   Pinia
+
+-   SCSS
+
+#### Dev зависимости:
+
+-   Vite
+
+-   TypeScript, @types-пакеты
