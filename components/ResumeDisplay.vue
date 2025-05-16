@@ -9,8 +9,318 @@
         </template>
 
         <template v-else>
-            <h1>Резюме: {{ resumeModel.data.name }}</h1>
-            <!-- Остальной вывод резюме -->
+            <!-- <h1>Резюме: {{ resumeModel.data.name }}</h1> -->
+
+            <!-- Мета-контролы -->
+            <div class="flex justify-start gap-2 mb-4">
+                <UButton
+                    title="Печать"
+                    icon="i-heroicons-printer"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="Скачать PDF"
+                    icon="i-heroicons-arrow-down-tray"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="Скачать DOC"
+                    icon="i-heroicons-document-arrow-down"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="Редактировать"
+                    icon="i-heroicons-pencil-square"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="Удалить"
+                    icon="i-heroicons-trash"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="Отправить"
+                    icon="i-heroicons-paper-airplane"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+                <UButton
+                    title="В избранное"
+                    icon="i-heroicons-star"
+                    color="primary"
+                    size="xl"
+                    square
+                />
+            </div>
+
+            <UCard>
+                <!-- Профиль кандидата -->
+                <div class="flex gap-6 items-start mb-4">
+                    <!-- Аватар (заглушка, если нет фото) -->
+                    <UAvatar
+                        :src="resumeModel.data.photo"
+                        size="3xl"
+                        icon="i-heroicons-user"
+                        class="shrink-0"
+                    />
+
+                    <!-- Текстовый блок -->
+                    <div class="space-y-1">
+                        <!-- ФИО -->
+                        <h2 class="text-2xl font-bold">
+                            {{ resumeModel.data.name }}
+                        </h2>
+
+                        <!-- Вакансия, дата отклика -->
+                        <p>
+                            {{ `Вакансия: ${resumeModel.data.listing_id}` }}
+                            {{
+                                `(${parseResponseDate(
+                                    resumeModel.data.date
+                                )} Отклик)`
+                            }}
+                        </p>
+
+                        <!-- Статус "Просмотрено" -->
+                        <UBadge color="success">
+                            {{
+                                resumeModel.data.status === 'viewed'
+                                    ? 'Просмотрено'
+                                    : 'Не просмотрено'
+                            }}
+                        </UBadge>
+
+                        <!-- Возраст -->
+                        <p>
+                            {{
+                                resumeModel.data.age
+                                    ? `${resumeModel.data.age} лет`
+                                    : 'Возраст не указан'
+                            }}
+                        </p>
+
+                        <!-- Телефон -->
+                        <div class="flex items-center gap-2">
+                            <UIcon name="i-heroicons-phone" class="w-5 h-5" />
+                            <span>
+                                {{
+                                    resumeModel.data.phone
+                                        ? `${resumeModel.data.phone}`
+                                        : 'Телефон не указан'
+                                }}
+                            </span>
+                            <div
+                                v-if="resumeModel.data.phone"
+                                class="flex items-center gap-2 text-primary-500"
+                            >
+                                <UIcon
+                                    name="i-simple-icons-whatsapp"
+                                    class="w-5 h-5 hover:opacity-80 cursor-pointer"
+                                />
+                                <UIcon
+                                    name="i-simple-icons-viber"
+                                    class="w-5 h-5 hover:opacity-80 cursor-pointer"
+                                />
+                                <UIcon
+                                    name="i-simple-icons-telegram"
+                                    class="w-5 h-5 hover:opacity-80 cursor-pointer"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Почта -->
+                        <div class="flex items-center gap-2">
+                            <UIcon
+                                name="i-heroicons-envelope"
+                                class="w-5 h-5"
+                            />
+                            <span>
+                                {{
+                                    resumeModel.data.email
+                                        ? `${resumeModel.data.email}`
+                                        : 'Почта не указана'
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Дела -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Дела:</h3>
+                    <div class="flex gap-4">
+                        <UButton color="success" disabled
+                            >Собеседование<br />запланировано</UButton
+                        >
+                        <UButton color="success" variant="outline"
+                            >Создать<br />видеозвонок</UButton
+                        >
+                        <UButton color="success" variant="outline" disabled
+                            >Запланировать<br />событие</UButton
+                        >
+                        <UButton color="success" variant="outline"
+                            >Отправить<br />запрос</UButton
+                        >
+                    </div>
+                </div>
+
+                <!-- Статус рассмотрения -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">
+                        Статус рассмотрения:
+                    </h3>
+                    <div class="flex gap-4 flex-wrap">
+                        <UBadge
+                            color="success"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Новое</UBadge
+                        >
+                        <UBadge
+                            color="success"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Просмотрено</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Отправлено<br />приглашение</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Назначено<br />собеседование</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Не дошёл</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Проведено<br />собеседование</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Ожидание ответа<br />соискателя</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[120px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Принятие решения</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Принят</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Отклонено/Отказ</UBadge
+                        >
+                        <UBadge
+                            color="neutral"
+                            variant="outline"
+                            class="w-[140px] text-center justify-center"
+                            trailing-icon="i-lucide-arrow-right"
+                            >Архивировано</UBadge
+                        >
+                    </div>
+                </div>
+
+                <!-- Источник отклика -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Pikabu отклик</h3>
+                    <p>Отклик с портала Pikabu</p>
+                </div>
+
+                <!-- Личные данные -->
+                <div class="mb-4">
+                    <p>
+                        <strong>Дата рождения:</strong>
+                        {{ resumeModel.data.birth_date }}
+                    </p>
+                    <p>
+                        <strong>Гражданство:</strong>
+                        {{ parseCitizenship(resumeModel.data.description) }}
+                    </p>
+                </div>
+
+                <!-- Сопроводительное письмо -->
+                <div class="mb-4">
+                    <p>{{ extractAbout(resumeModel.data.description) }}</p>
+                </div>
+
+                <!-- Прикрепленные файлы -->
+                <div
+                    class="bg-secondary-100 dark:bg-secondary-900 rounded-xl p-4 flex items-center gap-4 mt-6"
+                >
+                    <!-- Иконка -->
+                    <div
+                        class="text-secondary-600 dark:text-secondary-300 text-4xl font-bold"
+                    >
+                        <UIcon
+                            name="material-symbols:info-i-rounded"
+                            class="size-5"
+                        />
+                    </div>
+
+                    <!-- Контент -->
+                    <div class="space-y-4">
+                        <!-- Портфолио -->
+                        <div>
+                            <h4 class="font-semibold mb-1">
+                                Файлы портфолио:
+                                {{
+                                    resumeModel.data.portfolios
+                                        ? resumeModel.data.portfolios
+                                        : ''
+                                }}
+                            </h4>
+                        </div>
+
+                        <!-- Резюме -->
+                        <div>
+                            <h4 class="font-semibold mb-1 text-primary-600">
+                                Резюме:
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </UCard>
         </template>
     </div>
 </template>
@@ -45,4 +355,34 @@ onMounted(async () => {
         error.value = 'Failed to load resume';
     }
 });
+
+// Пример утилит
+function parseCitizenship(text: unknown): string {
+    if (typeof text !== 'string') return '-ошибка-';
+
+    const match = text.match(/Гражданство: (.+)/);
+    return match ? match[1] : '—';
+}
+
+function extractAbout(text: unknown): string {
+    if (typeof text !== 'string') return '-ошибка-';
+
+    const match = text.match(
+        /Подробнее о навыках:([\s\S]*?)(?:\r?\n[A-ZА-ЯЁ][^:\r\n]+:|$)/
+    );
+    return match ? match[1].trim() : '';
+}
+
+function parseResponseDate(dateStr: unknown): string {
+    if (typeof dateStr !== 'string') return '-ошибка-';
+
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '-неверный формат-';
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
 </script>
